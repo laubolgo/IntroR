@@ -1,0 +1,82 @@
+---
+title: "Intro a R"
+author: "Laura BolaÃ±os"
+date: "10 de octubre de 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción a R
+# Programando desde cero en español.
+
+# Contenidos
+
+###**Introducción**
+* ¿Qué es R?
+* Documentación
+* Otros Recursos de Información
+* Objetos en R y sus clases	
+  + Vectores
+  + Listas
+  + Matrices
+  + Data Frames
+  + Funciones
+  + Factores	
+* Práctica
+
+### R como proyecto COLABORATIVO - OPEN SOURCE
+
+R es un lenguaje de programación y entorno de software para análisis estadístico, representación gráfica e informes. 
+
+Creado por Ross Ihaka y Robert Gentleman en la Universidad de Auckland, Nueva Zelanda, y actualmente está desarrollado por R Development Core Team. 
+
+R está disponible gratuitamente bajo la Licencia Pública General de GNU, y se proporcionan versiones binarias precompiladas para varios sistemas operativos como Linux, Windows y Mac. 
+
+Este lenguaje de programación fue llamado R, basado en la primera letra del primer nombre de los dos autores R (Robert Gentleman y Ross Ihaka), y en parte por el nombre de Bell Labs Language S.
+
+R es el lenguaje de programación de estadístico más utilizado en el mundo. Es la opción número 1 de científicos de datos y cuenta con el respaldo de una comunidad de contribuyentes vibrante y talentosa. R se enseña en universidades y se implementa en aplicaciones comerciales de misión crítica.
+
+### Instalando R
+
+The Comprehensive R Archive Network: [**CRAN**](https://cran.r-project.org/)
+
+Download R for Linux
+Download R for (Mac) OS X
+Download R for Windows
+
+### [**R Studio**](https://www.rstudio.com/)
+
+Es un entorno de desarrollo integrado (IDE) para el lenguaje de programación R, dedicado a la computación estadística y gráficos. Incluye una consola, editor de sintaxis que apoya la ejecución de código, así como herramientas para el trazado, la depuración y la gestión del espacio de trabajo.
+
+RStudio está disponible para Windows, Mac y Linux o para navegadores conectados a RStudio Server o RStudio Server Pro (Debian / Ubuntu, RedHat / CentOS, y SUSE Linux).
+
+
+### R Packages 
+
+Los paquetes R son una colección de funciones R, una compilación de código y datos de muestra. Se almacenan bajo un directorio llamado “library()” en el entorno R. 
+De forma predeterminada, R instala un conjunto de paquetes durante la instalación. Más paquetes se agregan más tarde, cuando se necesitan para un propósito específico.
+
+Cuando iniciamos la consola R, solo los paquetes predeterminados están disponibles de forma predeterminada. 
+
+Otros paquetes que ya están instalados deben cargarse explícitamente para ser utilizados por el programa R que los va a usar.
+
+Todos los paquetes disponibles en lenguaje R se encuentran en [aquí](http://cran.es.r-project.org/web/packages/)
+
+
+*Comando*
+
+install.packages("Nombre del Paquete")
+
+#### [CRAN task views](https://cran.r-project.org/web/views/)
+
+Las vistas de tareas de CRAN tienen como objetivo proporcionar una guía sobre qué paquetes en CRAN son relevantes para las tareas relacionadas con un tema determinado. Ofrecen una breve descripción general de los paquetes incluidos y se pueden instalar automáticamente utilizando el paquete ctv. 
+
+Las vistas están destinadas a tener un enfoque nítido para que quede suficientemente claro qué paquetes deben incluirse (o excluirse), y no están destinados a respaldar los "mejores" paquetes para una tarea determinada.
+
+
+
