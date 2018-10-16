@@ -1,0 +1,289 @@
+---
+title: "Ejercicio_Titanic_Kaggle"
+author: "Laura Bolaños"
+date: "14 de octubre de 2018"
+output: html_document
+---
+
+# Set Working Directory
+
+El directorio de trabajo es donde están guardados nuestros datos y todo lo que iremos haciendo también se guaradará en esta carpeta.
+
+En *R Studio* lo puedes hacer haciendo click en Session -> Set Working Directory -> Choose Directory y navegas hasta donde has guardado tus datos, en este caso el *train* y *test* sets.
+
+Es una buena práctica guardar tus scipts y no escribir todo el código directamente en la Consola, de este modo podrás reproducir tu código cuando quieras o bien, realizar pequeños cambios. Para esto, puedes utilizar un R Markdown como este, o bien un R Script.  Click en New Document en la esquina superior izquierda, tiene un pequeño símbolo de más (+). Ahora, guardalo en tu Working Directory.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("C:/Users/laubo/OneDrive/Into_a_R/IntroR/Data")
+train <- read.csv("train.csv")
+test <- read.csv("test.csv")
+```
+
+Ahora vamos a examinar la estructura de los datos
+
+```{r, include=TRUE}
+str(train)
+```
+Hablemos de los tipos de datos que vemos aquí. Un *"int"* es un número entero que solo puede almacenar números enteros, un *"num"* es una variable numérica que puede contener decimales, y un *"factor"* es como una categoría. Por defecto, R importará todas las cadenas de texto como factores, y eso está bien aquí, podemos convertirlas de nuevo en texto más adelante si queremos manipularlas, pero si el conjunto de datos tiene una gran cantidad de texto, sabemos que querremos trabajar con el, podríamos haber importado el archivo con: > train <- read.csv("train.csv", stringsAsFactors=FALSE)
+
+En este caso, el nombre del pasajero, su número de boleto y la cabina se han importado como factores. Podemos ver que la variable de nombre tiene 891 niveles, lo que significa que no hay dos pasajeros que compartan el mismo nivel de factor que el número total de filas. Para los otros dos, hay menos niveles, probablemente porque faltan valores allí. Por ahora, dejemos el comando de importación como estaba, ya que el único factor con el que trabajaremos a corto plazo es la variable de género, que se importó correctamente como una categoría.
+
+Para acceder a las columnas de un marco de datos, hay varias opciones, pero si desea aislar una sola columna del marco de datos, use el operador de signo de dólar. Debería ver un vector de los destinos de los pasajeros en el conjunto de entrenamiento. Puedes alimentar este vector a una función también
+
+```{r, include=TRUE}
+table(train$Survived)
+```
+
+El comando de tabla es una de las funciones estadísticas de resumen más básicas en R, se ejecuta a través del vector que le dio y simplemente cuenta la ocurrencia de cada valor en ella. Vemos que en el set de entrenamiento, 342 pasajeros sobrevivieron, mientras que 549 murieron. ¿Qué tal una proporción? Bueno, podemos enviar la salida de una función a otra.
+
+```{r, include=TRUE}
+prop.table(table(train$Survived))
+```
+Muy bien, esto se lee mejor; un 38% de los pasajeros sobrevivió al desastre en el set de entrenamiento.
+
+Esto, por supuesto, significa que la mayoría de las personas a bordo perecieron. Entonces, ¿estás listo para hacer tu primera predicción? Dado que la mayoría de las personas murieron en nuestro conjunto de entrenamiento, tal vez sea un buen comienzo asumir que todos en el conjunto de pruebas también lo hicieron, un poco morboso quizás, pero rompamos el hielo (por así decirlo) y enviemos una predicción.
+
+Un poco más de sintaxis R para seguir moviéndote. El operador de asignación es *<-* y se utiliza para almacenar el valor del lado derecho en el lado izquierdo. Por ejemplo, *x <- 3* almacenará el valor de 3 en la variable x. 
+
+Bien, entonces agreguemos nuestra predicción de "todos mueren" al marco de datos del conjunto de pruebas (test). Para hacer esto, necesitaremos usar un nuevo comando, un representante que simplemente repite algo por el número de veces que le decimos:
+
+```{r, include=TRUE}
+test$survived <- rep(0, 418)
+```
+
+Como no había una columna "Sobrevivido" en el marco de datos, creará una para nosotros y repetirá nuestra predicción "0" 418 veces, el número de filas que tenemos. Si esta columna ya existiera, la sobreescribiría con los nuevos valores, ¡así que tenga cuidado! Aunque no es del todo necesario para este modelo simple, colocar la predicción junto a los datos existentes ayudará a mantener las cosas en orden más adelante, por lo que es un buen hábito para obtener predicciones más complicadas. Si obtiene una vista previa del marco de datos del conjunto de prueba ahora, encontrará nuestra nueva columna al final.
+
+Necesitamos crear un archivo csv con *"PassengerId"*" así como nuestras predicciones de Sobrevivientes. Entonces, extraigamos esas dos columnas del marco de datos de prueba, las almacenemos en un nuevo contenedor y luego las enviemos a un archivo de salida:
+
+```{r, include=TRUE}
+submit <- data.frame(PassengerId = test$PassengerId, survived = test$survived)
+write.csv(submit, file = "todosmueren.csv", row.names = FALSE)
+```
+
+El comando *data.frame* ha creado un nuevo marco de datos con los encabezados que coinciden con los del conjunto de prueba, siga adelante y eche un vistazo con una vista previa. El comando *write.csv* ha enviado ese marco de datos a un archivo CSV.
+
+Hasta ahora cubrimos los aspectos básicos de los datos de navegación en R, pero solo observamos la variable objetivo como un predictor. Ahora es el momento de probar y usar las otras variables en el conjunto de datos para predecir el objetivo con mayor precisión.
+
+El desastre fue famoso por salvar a "mujeres y niños primero", así que echemos un vistazo a las variables Sexo y Edad para ver si hay algún patrón evidente. Comenzaremos con el género de los pasajeros. Después de volver a cargar los datos en R, observe el resumen de esta variable:
+
+```{r, include=TRUE}
+summary(train$Sex)
+```
+
+Así vemos que la mayoría de los pasajeros eran hombres. Ahora expandamos el comando de tabla de proporciones que usamos la última vez para hacer una comparación bidireccional sobre el número de hombres y mujeres que sobrevivieron:
+
+```{r, include=TRUE}
+prop.table(table(train$Sex, train$Survived))
+```
+
+Bueno, eso no está muy limpio, el comando de la tabla de proporción toma por defecto cada entrada de la tabla y se divide por el número total de pasajeros. Lo que queremos ver es la proporción por filas, es decir, la proporción de cada sexo que sobrevivió, como grupos separados. Por lo tanto, necesitamos decirle al comando que nos dé proporciones en la primera dimensión que representa las filas (usando "2" en vez de eso le daremos proporciones de columna):
+
+```{r, include=TRUE}
+prop.table(table(train$Sex, train$Survived), 1)
+```
+
+Esto está mejor. Ahora podemos ver que la mayoría de las mujeres a bordo sobrevivieron, y un porcentaje muy bajo de hombres lo hizo. En nuestra última predicción, dijimos que todos morían, por lo que cambiar nuestra predicción para esta nueva visión debería darnos una gran ganancia en la tabla de clasificación. Actualicemos nuestra antigua predicción e introduzcamos más sintaxis de R:
+
+```{r, include=TRUE}
+test$survived <- 0
+test$survived[test$Sex == 'female'] <- 1
+```
+
+Aquí hemos comenzado con la adición de la columna de predicción "todos mueren" como antes, excepto que deshacemos el comando *rep* y asignamos el cero a toda la columna, tiene el mismo efecto. Luego modificamos esa misma columna con *1* para el subconjunto de pasajeros donde la variable *"Sexo"* es igual a *"Mujer"*.
+
+Acabamos de utilizar dos nuevas piezas de sintaxis R, el operador de igualdad, *==*, y el operador de *corchete*. Los corchetes crean un subconjunto de la trama de datos total, y aplican nuestra asignación de "1" solo a aquellas filas que cumplen con los criterios especificados. El doble signo igual ya no funciona como una asignación aquí, ahora es una prueba booleana para ver si ya son iguales.
+
+¡Muy Bonito! Estamos llegando allí, pero comencemos a profundizar en la variable de edad ahora:
+
+```{r, include=TRUE}
+summary(train$Age)
+```
+
+Es posible que falten valores en el análisis de datos, y esto puede causar una variedad de problemas en el mundo real que pueden ser bastante difíciles de tratar a veces. Por ahora podemos suponer que los 177 valores faltantes (NA's) son la edad promedio del resto de los pasajeros, es decir, veinte y tantos.
+
+Nuestras últimas tablas fueron sobre variables categóricas, es decir, solo tenían unos pocos valores. Ahora tenemos una variable continua que hace que dibujar tablas de proporciones sea casi inútil, ¡ya que solo puede haber uno o dos pasajeros para cada edad! Entonces, creemos una nueva variable, "Niño", para indicar si el pasajero tiene menos de 18 años:
+
+```{r, include=TRUE}
+train$Child <- 0
+train$Child[train$Age < 18] <- 1
+```
+
+Al igual que con nuestra columna de predicción, ahora hemos creado una nueva columna en el marco de datos del conjunto de prueba - test, que indica si el pasajero era un niño o no. Comenzando con la suposición de que eran adultos, y luego sobreescribiendo el valor para pasajeros menores de 18 años. Para hacer esto, utilizamos el operador menor que, que es otra prueba booleana, similar al control de igualdad usado en nuestras últimas predicciones. Si hace clic en el objeto del train en el explorador, verá que a todos los pasajeros con una edad de NA se les ha asignado un cero, esto se debe a que la NA no pasará ninguna prueba booleana. Sin embargo, esto es lo que queríamos, ya que habíamos decidido usar la edad promedio, que era un adulto.
+
+Ahora queremos crear una tabla con género y edad para ver las proporciones de supervivencia para diferentes subconjuntos. Desafortunadamente, nuestra tabla de proporciones no está equipada para esto, por lo que tendremos que usar un nuevo comando R, agregado. Primero, intentemos encontrar el número de sobrevivientes para los diferentes subconjuntos:
+
+```{r, include=TRUE}
+aggregate(Survived ~ Child + Sex, data = train, FUN = sum)
+```
+
+El comando agregado toma una fórmula con la variable de destino en el lado izquierdo del símbolo de tilde *~* y las variables a subconjuntar a la derecha. Luego le decimos qué marco de datos debe ver con el argumento de datos y, finalmente, qué función aplicar a estos subconjuntos. El comando anterior hace un subconjunto de toda la trama de datos sobre las diferentes combinaciones posibles de las variables de edad y género y aplica la función de suma al vector *Sobrevivido* para cada uno de estos subconjuntos. Como nuestra variable objetivo se codifica como *1* para sobrevivir y *0* para no, el resultado de la suma es el número de sobrevivientes. Pero no sabemos el número total de personas en cada subconjunto; vamos a averiguar:
+
+```{r, include=TRUE}
+aggregate(Survived ~ Child + Sex, data = train, FUN = length)
+```
+
+Esto simplemente observó la longitud del vector *Sobrevivido* para cada subconjunto y dio como resultado el resultado, el hecho de que cualquiera de ellos fuera 0 o 1 era irrelevante para la función de longitud. Ahora tenemos los totales para cada grupo de pasajeros, pero en realidad, nos gustaría saber las proporciones nuevamente. Hacer esto es un poco más complicado. Necesitamos crear una función que tome el vector de subconjunto como entrada y le aplique los comandos de suma y longitud, y luego haga la división para darnos una proporción. Aquí está la sintaxis:
+
+```{r, include=TRUE}
+aggregate(Survived ~ Child + Sex, data = train, FUN = function(x){sum(x)/length(x)})
+```
+
+Bueno, todavía parece que si un pasajero es femenino, la mayoría sobrevive, y si fuera un hombre, la mayoría no lo hace, independientemente de si era un niño o no. Así que no tenemos nada para cambiar nuestras predicciones aquí. Echemos un vistazo a un par de otras variables potencialmente interesantes para ver si podemos encontrar algo más: la clase en la que viajaban y lo que pagaron por su boleto.
+
+Si bien la variable de clase está limitada a 3 valores manejables, la tarifa es de nuevo una variable continua que debe reducirse a algo que se pueda tabular fácilmente. Dividamos las tarifas en menos de $ 10, entre $ 10 y $ 20, de $ 20 a $ 30 y más de $ 30 y almacenémoslas en una nueva variable:
+
+```{r, include=TRUE}
+train$Fare2 <- '30+'
+train$Fare2[train$Fare < 30 & train$Fare >= 20] <- '20-30'
+train$Fare2[train$Fare < 20 & train$Fare >= 10] <- '20-10'
+train$Fare2[train$Fare < 10] <- '<10'
+```
+
+Ahora ejecutemos una función agregada más larga para ver si hay algo interesante con lo que trabajar aquí:
+
+```{r, include=TRUE}
+aggregate(Survived ~ Fare2 + Sex + Pclass, data = train, FUN = function(x){sum(x)/length(x)})
+```
+
+Si bien la mayoría de los hombres, independientemente de la clase o la tarifa, no lo hacen tan bien, notamos que la mayoría de las mujeres de la clase 3 que pagaron más de $ 20 por su boleto en realidad también se pierden un bote salvavidas.
+
+Es un poco difícil imaginar por qué alguien en tercera clase con un boleto costoso se iría peor en el accidente, pero tal vez las cabinas más caras estaban ubicadas cerca del lugar del impacto del iceberg, o más allá de las escaleras de salida. Cualquiera sea la causa, hagamos una nueva predicción basada en las nuevas ideas.
+
+```{r, include=TRUE}
+test$Survived <- 0
+test$Survived[test$Sex == 'female'] <- 1
+test$Survived[test$Sex == 'female' & test$Pclass == 3 & test$Fare >= 20] <- 0
+```
+
+Ahora ya podemos crear marco de datos de envío y un archivo de salida por llamarlo de algún modo:
+
+```{r, include=TRUE}
+submit2 <- data.frame(PassengerId = test$PassengerId, Survived = test$Survived)
+write.csv(submit2, file = "modelogeneroclase.csv", row.names = FALSE)
+```
+
+En la siguiente parte, automatizaremos este proceso utilizando *¡árboles de decisión!*
+
+Hasta ahora hemos, cortamos y y hecho cuadritos los datos para tratar de encontrar subconjuntos de pasajeros que tuvieran más o menos probabilidades de sobrevivir al desastre. Para encontrar más subconjuntos de grano fino con capacidad predictiva, se necesitaría mucho tiempo para ajustar los tamaños de nuestros contenedores y observar la interacción de muchas variables diferentes. Por suerte hay un algoritmo simple y elegante que puede hacer este trabajo por nosotros. Vamos a utilizar el aprendizaje automático (machine learning) para construir árboles de decisiones para hacer el trabajo pesado para nosotros.
+
+Los árboles de decisión tienen una serie de ventajas. Son lo que se conoce como un modelo de caja de vidrio. Una vez que el modelo haya encontrado los patrones en los datos, podrá ver exactamente qué decisiones se tomarán para los datos invisibles que desea predecir. También son intuitivos y pueden ser leídos por personas con poca experiencia en aprendizaje automático después de una breve explicación. Finalmente, son la base de algunos de los algoritmos de aprendizaje automático más potentes y populares.
+
+No vamos a entrar en las matemáticas aquí, pero conceptualmente, el algoritmo comienza con todos los datos en el nodo raíz y escanea todas las variables para encontrar la mejor. La forma en que se mide esto es dividir la variable que resulta en los nodos más puros debajo de ella, es decir, con la mayoría de los 1 o los más 0'9 en los grupos resultantes. Pero veamos algo más familiar para tener la idea. Aquí dibujamos un árbol de decisiones solo para la variable de género, y algunos números familiares saltan:
+
+Antes, debemos instalar y cargar los paquetes requeridos para realizar para el trazado elegante del árbol de decisiones:
+
+```{r, include=TRUE}
+install.packages('rattle')
+install.packages('rpart.plot')
+install.packages('RColorBrewer')
+library(rpart)
+library(rattle)
+library(rpart.plot)
+library(RColorBrewer)
+```
+
+## Recrear el Modelo de Género
+
+```{r, include=TRUE}
+fit <- rpart(Survived ~ Sex, data = train, method = "class")
+fancyRpartPlot(fit)
+```
+
+Decodifiquemos los números que se muestran en esta nueva representación de nuestro modelo manual original basado en el género. El nodo raíz, en la parte superior, muestra nuestra primera predicción, donde el 62% de los pasajeros mueren, mientras que el 38% sobrevive. El número que se encuentra sobre estas proporciones indica la forma en que vota el nodo (recordemos que en este nivel superior decidimos que todos morirían o que se codificarían como cero) y el número siguiente indica la proporción de la población que reside en este nodo o grupo (Aquí en el nivel superior es de todos, 100%).
+
+Si el pasajero era un hombre, indicado por la opción booleana debajo del nodo, se mueve a la izquierda, y si es mujer, a la derecha. Las proporciones de supervivencia coinciden exactamente con las que encontramos en la segunda parte a través de nuestras tablas de proporciones. Si el pasajero era hombre, solo el 19% sobrevive, por lo que el grupo vota que todos aquí (65% de los pasajeros) perecen, mientras que el grupo femenino vota de la manera opuesta, la mayoría de ellos sobrevive como vimos anteriormente. De hecho, el árbol de decisiones anterior es una representación exacta de nuestro modelo de género.
+
+Hasta aquí, todo bien. Ahora vamos a bajar las ramas de los árboles a los siguientes nodos del árbol. 
+
+Ahora empezamos a abrir el poder de R: *sus paquetes.* R es extremadamente extensible, te será difícil encontrar un paquete que no haga automáticamente lo que necesitas. Hay miles de opciones escritas por personas que necesitaban la funcionalidad y publicaron su trabajo. Puede agregar fácilmente estos paquetes dentro de R con solo un par de comandos.
+
+El que necesitaremos viene con R. Se llama *rpart* para "Partición Recursiva y Árboles de Regresión" y utiliza el algoritmo de árbol de decisión CART. Mientras que rpart viene con la base R, aún necesita importar la funcionalidad cada vez que quiera usarla.
+
+```{r, include=TRUE}
+library(rpart)
+```
+
+Ahora vamos a construir nuestro primer modelo. Revisemos rápidamente las posibles variables que podríamos considerar. La última vez usamos tablas de agregados y proporciones para comparar género, edad, clase y tarifa. Pero nunca investigamos SibSp, Parch o Embarked. Las variables restantes del nombre del pasajero, número de boleto y número de cabina son identificadores únicos por ahora; no dan ningún subconjunto nuevo que sea interesante para un árbol de decisión. Así que vamos a construir un árbol de todo lo demás.
+
+El formato del comando *rpart* funciona de manera similar a la función agregada que usamos en la parte 2. Se alimenta con la ecuación, encabezada por la variable de interés y seguida por las variables utilizadas para la predicción. Luego, nos dirigimos a los datos y, por ahora, sigamos con el tipo de predicción que deseamos ejecutar (consulata *?Rpart* para obtener más información). Si deseas predecir una variable continua, como la edad, puedes usar *method = "anova"*. Esto ejecutaría cantidades con decimales. Pero aquí, solo queremos un uno o un cero, por lo que *method = "class"* es apropiado. Examinemos el árbol. Hay muchas maneras de hacer esto, y la versión incorporada requiere que se ejecute:
+
+```{r, include=TRUE}
+fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data= train, method = "class" )
+#Gráfico basado en R
+plot(fit)
+text(fit)
+# Ahora, hagamoslo guapo con fancyRpartPlot
+fancyRpartPlot(fit)
+```
+
+Bien, ahora tenemos un árbol legible. Las decisiones que se han encontrado van mucho más allá de lo que vimos la última vez cuando las buscamos manualmente. Se han encontrado decisiones para la variable *SipSp*, así como para el puerto de embarque que ni siquiera vimos. Y en el lado masculino, los niños menores de 6 años tienen una mejor probabilidad de supervivencia, incluso si no hubiera demasiados a bordo. Eso resuena con la famosa ley naval que mencionamos anteriormente (primero mujeres y niños).
+
+Los nodos finales en la parte inferior del árbol de decisión se conocen como nodos terminales, o algunas veces como nodos de hoja. Después de que se hayan tomado todas las decisiones booleanas para un pasajero determinado, terminarán en uno de los nodos de hoja, y la mayoría de los votos de todos los pasajeros en ese cubo determinarán cómo predeciremos para los nuevos pasajeros con destinos desconocidos.
+
+Hagamos ahora un marco de datos de envío y un archivo de salida con nuestra predicción gracias al árbol de decision:
+
+```{r, include=TRUE}
+Prediction <- predict(fit, test, type = "class")
+submit3 <- data.frame(PassengerId = test$PassengerId, Survived = Prediction)
+write.csv(submit3, file = "miprimerarbol.csv", row.names = FALSE)
+```
+
+
+Pero puedes seguir y hacer crecer este árbol hasta que se clasifique a cada pasajero y todos los nodos estén marcados con una probabilidad de supervivencia del 0% o del 100% ... ¡Todo ese corte y comparación de subconjuntos se solucionan en un abrir y cerrar de ojos!
+
+Los árboles de decisión tienen algunos inconvenientes, sin embargo, son codiciosos. Toman la decisión sobre el nodo actual, que parece ser el mejor en ese momento, pero no pueden cambiar de opinión a medida que crecen nuevos nodos. Tal vez un árbol mejor y más puro hubiera crecido si la división de género ocurriera más tarde. Es realmente difícil decirlo, hay una gran cantidad de decisiones que podrían tomarse, y explorar cada versión posible de un árbol es extremadamente costoso computacionalmente. Es por esto que se utiliza el algoritmo codicioso (greedy algorithm).
+
+El *paquete rpart* limita automáticamente la profundidad a medida que crece el árbol mediante el uso de una métrica llamada *complejidad*, que impide que el modelo resultante se salga de control. Pero ya vimos que un modelo más complejo que el que nos hicimos hizo un poco mejor, así que ¿por qué no hacer todo lo posible para anular los valores predeterminados? Vamos a hacerlo.
+
+Puedes encontrar los límites predeterminados escribiendo *?rpart.control*. El primero que queremos liberar es el parámetro *cp*, ésta es la métrica que detiene las divisiones que no se consideran lo suficientemente importantes. La otra que queremos abrir es la *minsplit*, que regula la cantidad de pasajeros que deben sentarse en un cubo antes de buscar una división. Vamos a maximizar ambas y reducir el cp a cero y la división de minutos a 2 (obviamente, no sería posible una división para un solo pasajero en un cubo):
+
+```{r, include=TRUE}
+fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked,             data = train,
+            method = "class",
+             control = rpart.control(minsplit = 2, cp = 0))
+fancyRpartPlot(fit)
+```
+
+De acuerdo, ni siquiera podemos ver lo que está pasando aquí, pero con tanto subconjunto y minería en busca de pequeñas pepitas de verdad, ¿cómo podemos equivocarnos?
+
+¡Bienvenidas al sobreajuste (overfitting)!
+
+El ajuste excesivo se define técnicamente como un modelo que funciona mejor en un conjunto de entrenamiento que en otro modelo más simple, pero funciona peor en datos invisibles, como vimos aquí. Fuimos demasiado lejos y ampliamos nuestro árbol de decisiones para abarcar reglas masivamente complejas que pueden no generalizar a pasajeros desconocidos. Quizás esa mujer de 34 años en tercera clase que pagó $ 20.17 por un boleto de Southampton con una hermana y una madre a bordo puede haber sido un caso un poco raro después de todo.
+
+El objetivo de este ejercicio fue que debes tener cuidado con los árboles de decisión. Si bien este árbol en particular puede haber sido 100% exacto en los datos en los que lo entrenó, incluso un árbol trivial con una sola regla podría vencerlo con datos invisibles. 
+
+Tenga cuidado con los árboles de decisión, y con cualquier otro algoritmo en realidad, ¡o puede encontrarse haciendo reglas desde los datos con ruido que ha confundido con una señal.
+
+Antes de continuar, te invito a jugar con los diversos parámetros de control que vimos en el archivo de ayuda *rpart.control*. Quizás pueda encontrar un árbol que lo haga un poco mejor. También puede recortar árboles manualmente en R con estos comandos:
+
+```{r, include=TRUE}
+fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked,
+             data = train,
+             method = "class",
+             control = rpart.control(minsplit = 2, cp = 0.005))
+new.fit <- prp(fit, snip = TRUE)$obj
+fancyRpartPlot(new.fit)
+```
+Aparecerá una versión interactiva del árbol de decisión en la pestaña *plot*, donde simplemente haces click en los nodos que deseas quitar. Una vez que estes satisfecho con el árbol, presiona "salir" y se almacenará en el objeto new.fit. Trata de buscar decisiones demasiado complejas que se están tomando, y elimine los nodos que parecen llegar muy lejos.
+
+### La ingeniería de características
+
+La ingeniería de características ha sido descrita como el factor más importante para determinar el éxito o el fracaso de un modelo predictivo. La ingeniería de características realmente se reduce al elemento humano en el aprendizaje automático. Cuánto entienden los datos, con su intuición humana y creatividad, pueden marcar la diferencia.
+
+Entonces, ¿qué es la ingeniería de características? Puede significar muchas cosas para diferentes problemas, pero en la competencia del Titanic podría significar cortar y combinar diferentes atributos que nos dieron las buenas personas en Kaggle para exprimirles un poco más el valor. En general, una característica diseñada puede ser más fácil para que un algoritmo de machine learning digiera y establezca reglas a partir de las variables de las que se derivó.
+
+Los sospechosos iniciales para obtener más ganancia del Machine Learning son los tres campos de texto que nunca enviamos a nuestros árboles de decisión la última vez. Mientras que el número del boleto, la cabina y el nombre eran todos únicos para cada pasajero; quizás partes de esas cadenas de texto podrían extraerse para construir un nuevo atributo predictivo. Empecemos con el campo de nombre. Si echamos un vistazo al nombre del primer pasajero vemos lo siguiente:
+
+```{r, include=TRUE}
+train$Name[1]
+```
+
+Anteriormente, solo hemos accedido a grupos de pasajeros mediante subconjuntos, ahora accedemos a un individuo utilizando el número de fila, 1, como un índice. De acuerdo, nadie más en el barco tenía ese nombre, eso es casi seguro, pero ¿qué otra cosa podrían haber compartido? Bueno, estoy segura de que había un montón de *Mr* a bordo. Quizás el título de las personas podría darnos un poco más de comprensión.
+
+Si nos desplazamos por el conjunto de datos, vemos muchos más títulos, incluidos Miss, Mrs, Master e incluso Countess ¡la condesa! El título "Master" está un poco desactualizado ahora, pero en esos días estaba reservado para los varones solteros. Además, la nobleza como nuestra condesa, probablemente actuaría de manera diferente al humilde proletariado también. Parece que hay pocas posibilidades de patrones en esto que pueden profundizar más que las combinaciones de edad, género, etc. que vimos antes.
+
+Con el fin de extraer estos títulos para crear nuevas variables, tendremos que realizar las mismas acciones tanto en el conjunto de entrenamiento (train) como en el de prueba (test), de modo que las funciones estén disponibles para hacer crecer nuestros árboles de decisión y hacer predicciones sobre los datos de prueba invisibles. Una forma fácil de realizar los mismos procesos en ambos conjuntos de datos al mismo tiempo es fusionarlos. En R podemos usar *rbind*, que significa enlace de fila, siempre y cuando ambos marcos de datos tengan las mismas columnas entre sí. Como obviamente carecemos de la columna Sobrevivido en nuestro conjunto de pruebas (test), creamos uno lleno de valores perdidos (NA) y luego unimos en fila los dos conjuntos de datos:
+
+
