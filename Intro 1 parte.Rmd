@@ -1,37 +1,22 @@
 ---
 title: "Intro a R"
-author: "Laura BolaÃ±os"
-date: "10 de octubre de 2018"
+subtitle: "Programando desde cero en español."
+author: "Laura Bolaños"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document: default
-  html_document: default
+  html_document: 
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Introducción a R
-# Programando desde cero en español.
-
-# Contenidos
-
-###**Introducción**
-* ¿Qué es R?
-* Documentación
-* Otros Recursos de Información
-* Objetos en R y sus clases	
-  + Vectores
-  + Listas
-  + Matrices
-  + Data Frames
-  + Funciones
-  + Factores	
-* Práctica
+## ¿Qué es R?
 
 ### R como proyecto COLABORATIVO - OPEN SOURCE
 
-R es un lenguaje de programación y entorno de software para análisis estadístico, representación gráfica e informes. 
+[R](https://www.r-project.org/) es un lenguaje de programación y entorno de software para análisis estadístico, representación gráfica e informes. 
 
 Creado por Ross Ihaka y Robert Gentleman en la Universidad de Auckland, Nueva Zelanda, y actualmente está desarrollado por R Development Core Team. 
 
@@ -45,18 +30,30 @@ R es el lenguaje de programación de estadístico más utilizado en el mundo. Es
 
 The Comprehensive R Archive Network: [**CRAN**](https://cran.r-project.org/)
 
-Download R for Linux
-Download R for (Mac) OS X
-Download R for Windows
+- [R para Linux](https://cran.r-project.org/bin/linux/)
+- [R para (Mac) OS X](https://cran.r-project.org/bin/macosx/)
+- [R para Windows](https://cran.r-project.org/)
 
-### [**R Studio**](https://www.rstudio.com/)
+### [RStudio](https://www.rstudio.com/)
 
 Es un entorno de desarrollo integrado (IDE) para el lenguaje de programación R, dedicado a la computación estadística y gráficos. Incluye una consola, editor de sintaxis que apoya la ejecución de código, así como herramientas para el trazado, la depuración y la gestión del espacio de trabajo.
 
-RStudio está disponible para Windows, Mac y Linux o para navegadores conectados a RStudio Server o RStudio Server Pro (Debian / Ubuntu, RedHat / CentOS, y SUSE Linux).
+RStudio está disponible para Windows, Mac y Linux o para navegadores conectados a RStudio Server o RStudio Server Pro (Debian / Ubuntu, RedHat / CentOS, y SUSE Linux). RStudio es una empresa privada que hace un IDE gratuito.
 
+#### El IDE RStudio
 
-### R Packages 
+Cuando lo instalas te encontrarás con una pantalla como esta:
+
+![](https://swcarpentry.github.io/r-novice-gapminder/fig/01-rstudio.png)
+
+- En la parte izquierda está la consola interactiva.
+- Arriba a la derecha está el entorno local y la consola.
+- Abajo a la derecha tienes el directorio, los gráficos, paquetes, la ayuda y el visor.
+- Finalmente cuando abres un documento o script se abre arriba a la izquierda.
+
+![](https://swcarpentry.github.io/r-novice-gapminder/fig/01-rstudio-script.png)
+
+### Paquetes de R
 
 Los paquetes R son una colección de funciones R, una compilación de código y datos de muestra. Se almacenan bajo un directorio llamado “library()” en el entorno R. 
 De forma predeterminada, R instala un conjunto de paquetes durante la instalación. Más paquetes se agregan más tarde, cuando se necesitan para un propósito específico.
@@ -65,18 +62,30 @@ Cuando iniciamos la consola R, solo los paquetes predeterminados están disponib
 
 Otros paquetes que ya están instalados deben cargarse explícitamente para ser utilizados por el programa R que los va a usar.
 
-Todos los paquetes disponibles en lenguaje R se encuentran en [aquí](http://cran.es.r-project.org/web/packages/)
+La mayoría de paquetes disponibles en lenguaje R se encuentran en [CRAN](http://cran.es.r-project.org/web/packages/) o [GitHub](http://rpkg.gepuro.net/).
 
 
-*Comando*
-
+```r
 install.packages("Nombre del Paquete")
+```
 
-#### [CRAN task views](https://cran.r-project.org/web/views/)
+### [CRAN task views](https://cran.r-project.org/web/views/)
 
 Las vistas de tareas de CRAN tienen como objetivo proporcionar una guía sobre qué paquetes en CRAN son relevantes para las tareas relacionadas con un tema determinado. Ofrecen una breve descripción general de los paquetes incluidos y se pueden instalar automáticamente utilizando el paquete ctv. 
 
 Las vistas están destinadas a tener un enfoque nítido para que quede suficientemente claro qué paquetes deben incluirse (o excluirse), y no están destinados a respaldar los "mejores" paquetes para una tarea determinada.
 
 
+### Documentación
+
+## Otros Recursos de Información
+
+## Objetos en R y sus clases	
+### Vectores
+### Listas
+### Matrices
+### Data Frames
+### Funciones
+### Factores	
+## Práctica
 
