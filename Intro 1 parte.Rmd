@@ -80,7 +80,60 @@ Las vistas están destinadas a tener un enfoque nítido para que quede suficient
 
 ## Otros Recursos de Información
 
-## Objetos en R y sus clases	
+## El lenguaje R
+
+### Usar R como una calculadora
+
+Cuando abres RStudio o una consola de R lo más sencillo que puedes hacer es usarla como una calculadora:
+
+```{r calculator}
+1 + 100
+```
+
+* Nota: si quieres cancelar un comando teclea `Ctrl + C`.
+
+**Operaciones**:
+
+- `()` y `[]`: paréntesis y corchetes.
+- `**` y `^`: exponentes.
+- `/`: división.
+- `*`: multiplicación.
+- `+`: adición.
+- `-`: resta.
+
+El orden de las operaciones es el mismo que en matemáticas:
+
+```{r orden}
+3 + 5 * 2
+
+(3 + 5) * 2
+```
+
+Puedes usar notación científica:
+
+```{r cientifico}
+2/100000
+
+5e04
+```
+### Funciones matemáticas
+
+Para llamar a una función escribe el nombre de la función seguido de paréntesis. Lo que va entre paréntesis se llama argumentos:
+
+```{r funciones}
+sin(pi / 2)
+
+log(1)
+
+log10(10)
+
+exp(1)
+```
+
+### Booleanos y comparando cosas
+
+
+
 ### Vectores
 ### Listas
 ### Matrices

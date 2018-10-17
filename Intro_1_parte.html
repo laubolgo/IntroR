@@ -309,7 +309,7 @@ $(document).ready(function () {
 <h1 class="title toc-ignore">Intro a R</h1>
 <h3 class="subtitle"><em>Programando desde cero en español.</em></h3>
 <h4 class="author"><em>Laura Bolaños</em></h4>
-<h4 class="date"><em>16 October, 2018</em></h4>
+<h4 class="date"><em>17 October, 2018</em></h4>
 
 </div>
 
@@ -324,7 +324,10 @@ $(document).ready(function () {
 <li><a href="#documentacion">Documentación</a></li>
 </ul></li>
 <li><a href="#otros-recursos-de-informacion">Otros Recursos de Información</a></li>
-<li><a href="#objetos-en-r-y-sus-clases">Objetos en R y sus clases</a><ul>
+<li><a href="#el-lenguaje-r">El lenguaje R</a><ul>
+<li><a href="#usar-r-como-una-calculadora">Usar R como una calculadora</a></li>
+<li><a href="#funciones-matematicas">Funciones matemáticas</a></li>
+<li><a href="#booleanos-y-comparando-cosas">Booleanos y comparando cosas</a></li>
 <li><a href="#vectores">Vectores</a></li>
 <li><a href="#listas">Listas</a></li>
 <li><a href="#matrices">Matrices</a></li>
@@ -392,8 +395,51 @@ $(document).ready(function () {
 <div id="otros-recursos-de-informacion" class="section level2">
 <h2>Otros Recursos de Información</h2>
 </div>
-<div id="objetos-en-r-y-sus-clases" class="section level2">
-<h2>Objetos en R y sus clases</h2>
+<div id="el-lenguaje-r" class="section level2">
+<h2>El lenguaje R</h2>
+<div id="usar-r-como-una-calculadora" class="section level3">
+<h3>Usar R como una calculadora</h3>
+<p>Cuando abres RStudio o una consola de R lo más sencillo que puedes hacer es usarla como una calculadora:</p>
+<pre class="r"><code>1 + 100</code></pre>
+<pre><code>## [1] 101</code></pre>
+<ul>
+<li>Nota: si quieres cancelar un comando teclea <code>Ctrl + C</code>.</li>
+</ul>
+<p><strong>Operaciones</strong>:</p>
+<ul>
+<li><code>()</code> y <code>[]</code>: paréntesis y corchetes.</li>
+<li><code>**</code> y <code>^</code>: exponentes.</li>
+<li><code>/</code>: división.</li>
+<li><code>*</code>: multiplicación.</li>
+<li><code>+</code>: adición.</li>
+<li><code>-</code>: resta.</li>
+</ul>
+<p>El orden de las operaciones es el mismo que en matemáticas:</p>
+<pre class="r"><code>3 + 5 * 2</code></pre>
+<pre><code>## [1] 13</code></pre>
+<pre class="r"><code>(3 + 5) * 2</code></pre>
+<pre><code>## [1] 16</code></pre>
+<p>Puedes usar notación científica:</p>
+<pre class="r"><code>2/100000</code></pre>
+<pre><code>## [1] 2e-05</code></pre>
+<pre class="r"><code>5e04</code></pre>
+<pre><code>## [1] 50000</code></pre>
+</div>
+<div id="funciones-matematicas" class="section level3">
+<h3>Funciones matemáticas</h3>
+<p>Para llamar a una función escribe el nombre de la función seguido de paréntesis. Lo que va entre paréntesis se llama argumentos:</p>
+<pre class="r"><code>sin(pi / 2)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>log(1)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>log10(10)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>exp(1)</code></pre>
+<pre><code>## [1] 2.718282</code></pre>
+</div>
+<div id="booleanos-y-comparando-cosas" class="section level3">
+<h3>Booleanos y comparando cosas</h3>
+</div>
 <div id="vectores" class="section level3">
 <h3>Vectores</h3>
 </div>
