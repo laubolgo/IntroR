@@ -327,7 +327,8 @@ $(document).ready(function () {
 <li><a href="#el-lenguaje-r">El lenguaje R</a><ul>
 <li><a href="#usar-r-como-una-calculadora">Usar R como una calculadora</a></li>
 <li><a href="#funciones-matematicas">Funciones matemáticas</a></li>
-<li><a href="#booleanos-y-comparando-cosas">Booleanos y comparando cosas</a></li>
+<li><a href="#booleanos-y-comparaciones">Booleanos y comparaciones</a></li>
+<li><a href="#variables-y-asignaciones">Variables y asignaciones</a></li>
 <li><a href="#vectores">Vectores</a></li>
 <li><a href="#listas">Listas</a></li>
 <li><a href="#matrices">Matrices</a></li>
@@ -437,8 +438,24 @@ $(document).ready(function () {
 <pre class="r"><code>exp(1)</code></pre>
 <pre><code>## [1] 2.718282</code></pre>
 </div>
-<div id="booleanos-y-comparando-cosas" class="section level3">
-<h3>Booleanos y comparando cosas</h3>
+<div id="booleanos-y-comparaciones" class="section level3">
+<h3>Booleanos y comparaciones</h3>
+<pre class="r"><code>1 == 1</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>as.integer('a' == 'a')</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>1 &gt; 2</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>as.integer(1 &gt;= 2)</code></pre>
+<pre><code>## [1] 0</code></pre>
+</div>
+<div id="variables-y-asignaciones" class="section level3">
+<h3>Variables y asignaciones</h3>
+<p>Asignamos variables usando el operador <code>&lt;-</code>:</p>
+<pre class="r"><code>x &lt;- 'soy una variable'
+
+x</code></pre>
+<pre><code>## [1] &quot;soy una variable&quot;</code></pre>
 </div>
 <div id="vectores" class="section level3">
 <h3>Vectores</h3>

@@ -130,11 +130,41 @@ log10(10)
 exp(1)
 ```
 
-### Booleanos y comparando cosas
+### Booleanos y comparaciones
 
+```{r comparaciones}
+1 == 1
 
+as.integer('a' == 'a')
+
+1 > 2
+
+as.integer(1 >= 2)
+```
+
+### Variables y entornos
+
+Asignamos variables usando el operador `<-`:
+
+```{r asignar}
+x <- 'soy una variable'
+
+x
+```
+
+Si miras en la pantalla de *entorno* podrás ver la variable guardada y usarla en otras funciones y reasignadas.
+
+```{r usar_variables}
+print(x)
+
+x <- 'ahora tengo otro valor'
+```
+
+También puedes asignar con `=` pero es menos utilizado. Lo más importante es ser consistente en tus programas. Es recomendado usar `<-`.
 
 ### Vectores
+
+
 ### Listas
 ### Matrices
 ### Data Frames
